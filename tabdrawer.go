@@ -106,11 +106,18 @@ type TabPlayer struct {
 	Gamemode    string
 }
 
-func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, params TabParameters) image.Image {
-
+func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, params *TabParameters) image.Image {
+	if params == nil {
+		params = &TabParameters{}
+	}
 	mctx := gg.NewContext(500, 500) // measuring context
-	mctx.SetFontFace(params.Font)
+	if params.Font != nil {
+		mctx.SetFontFace(params.Font)
+	}
 
+	if params.MaxRows == 0 {
+		params.MaxRows = 20
+	}
 	cols := len(players) / params.MaxRows
 	if len(players)%params.MaxRows != 0 {
 		cols++
@@ -150,9 +157,15 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 
 	tabh := tabtoph + lineh + (rowh+params.RowSpacing)*(float64(params.MaxRows)) + lineh + tabbottomh + lineh
 	c := gg.NewContext(int(tabw), int(tabh))
-	c.SetColor(params.BackgroundColor)
+	if params.BackgroundColor != nil {
+		c.SetColor(params.BackgroundColor)
+	} else {
+		c.SetColor(DefaultDiscordBackgroundColor)
+	}
 	c.Clear()
-	c.SetFontFace(params.Font)
+	if params.Font != nil {
+		c.SetFontFace(params.Font)
+	}
 
 	if params.DebugHeight {
 		c.SetColor(color.RGBA{255, 0, 0, 255})
@@ -162,7 +175,12 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 		c.Fill()
 	}
 
-	topf := fragmentMessage(c, gg.AlignCenter, *tabtop, tabw/2, lineh, params.ChatColorCodes)
+	colorcodes := DefaultChatColorCodes
+	if params.ChatColorCodes != nil {
+		colorcodes = params.ChatColorCodes
+	}
+
+	topf := fragmentMessage(c, gg.AlignCenter, *tabtop, tabw/2, lineh, colorcodes)
 	topmy := float64(0)
 	for _, f := range topf {
 		c.SetColor(f.color)
@@ -185,7 +203,11 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 				break
 			}
 			pl := players[keys[plc]]
-			c.SetColor(params.PlayerBackgroundColor)
+			if params.PlayerBackgroundColor != nil {
+				c.SetColor(params.PlayerBackgroundColor)
+			} else {
+				c.SetColor(DefaultPlayerBackgroundColor)
+			}
 			rowx := tabw/2 - (float64(cols)*(colw+params.ColumnSpacing))/2 + float64(col)*(colw+params.ColumnSpacing) + params.ColumnSpacing/2
 			rowy := tabtoph + lineh + float64(row)*(rowh+params.RowSpacing)
 			c.DrawRectangle(rowx, rowy, colw, rowh)
@@ -200,7 +222,11 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 				pings = fmt.Sprintf("%dms", pl.Ping)
 			}
 			pw, _ := c.MeasureString(pings)
-			c.SetColor(DefaultLatencyColoring(pl.Ping))
+			if params.LatencyColoring != nil {
+				c.SetColor(params.LatencyColoring(pl.Ping))
+			} else {
+				c.SetColor(DefaultLatencyColoring(pl.Ping))
+			}
 			c.DrawString(pings, rowx+colw-pw, rowy+rowh-(params.RowAdditionalHeight)-2)
 			if pl.HeadTexture != nil {
 				c.DrawImage(imaging.Resize(pl.HeadTexture, int(rowh), int(rowh), imaging.NearestNeighbor), int(rowx), int(rowy))
@@ -208,7 +234,7 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 			plc++
 		}
 	}
-	bottomf := fragmentMessage(c, gg.AlignCenter, *tabbottom, tabw/2, tabtoph+lineh+(rowh+params.RowSpacing)*(float64(params.MaxRows))+lineh*2, params.ChatColorCodes)
+	bottomf := fragmentMessage(c, gg.AlignCenter, *tabbottom, tabw/2, tabtoph+lineh+(rowh+params.RowSpacing)*(float64(params.MaxRows))+lineh*2, colorcodes)
 	for _, f := range bottomf {
 		c.SetColor(f.color)
 		c.DrawString(f.str, f.x, f.y)
