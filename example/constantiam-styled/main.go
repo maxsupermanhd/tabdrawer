@@ -54,7 +54,7 @@ func main() {
 	must(ctop.UnmarshalJSON([]byte(`{"text":"","extra":[{"text":"\n"},{"text":"https://constantiam.net\n","color":"dark_aqua"},{"text":"reddit.com/r/constantiam\n","color":"dark_aqua"},{"text":"phantom@constantiam.net\n","color":"dark_aqua"},{"text":""}]}`)))
 	must(cbottom.UnmarshalJSON([]byte(`{"text":"","extra":[{"text":"\n"},{"text":"  "},{"text":"Ping: 14   TPS: ","color":"dark_aqua"},{"text":"20.0   ","color":"green"},{"text":"Players: 42  \n","color":"dark_aqua"},{"text":"/help - /joindate - /donate\n","color":"gold"},{"text":""}]}`)))
 
-	result := tabdrawer.DrawTab(players, ctop, cbottom, params)
+	result := tabdrawer.DrawTab(players, ctop, cbottom, &params)
 	buf := bytes.NewBufferString("")
 	must(png.Encode(buf, result))
 
