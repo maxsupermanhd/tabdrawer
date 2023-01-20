@@ -55,25 +55,48 @@ var (
 type LatencyStyling int
 
 const (
-	LatencyNumber LatencyStyling = iota
-	LatencyNumberMs
+	LatencyNumberMs LatencyStyling = iota
+	LatencyNumber
 )
 
 type TabParameters struct {
-	LatencyColoring       func(int) color.Color
-	LatencyStyle          LatencyStyling
-	ChatColorCodes        map[string]color.RGBA
-	BackgroundColor       color.Color
+	// LatencyColoring func that returns color of latency text that you desire
+	// if nil DefaultLatencyColoring is used
+	LatencyColoring func(int) color.Color
+
+	// LatencyStyle do you want "ms" at the end?
+	LatencyStyle LatencyStyling
+
+	// ChatColorCodes Issues with color contrast? You can change it here
+	// if nil DefaultChatColorCodes is used
+	ChatColorCodes map[string]color.RGBA
+
+	// BackgroundColor if nil DefaultDiscordBackgroundColor
+	BackgroundColor color.Color
+
+	// BackgroundColor if nil DefaultPlayerBackgroundColor
 	PlayerBackgroundColor color.Color
-	RowSpacing            float64
-	RowAdditionalHeight   float64
-	ColumnSpacing         float64
-	MaxRows               int
-	FontColor             color.Color
-	Font                  font.Face
-	LineSpacing           float64
-	DebugTopBottom        bool
-	DebugHeight           bool
+
+	// RowSpacing distance between rows
+	RowSpacing float64
+
+	// RowAdditionalHeight adds space above and below text in rows (measures to keep weird symbols inside their rows)
+	RowAdditionalHeight float64
+
+	// ColumnSpacing distance between columns
+	ColumnSpacing float64
+
+	// MaxRows how many rows will be in one column at max
+	MaxRows int
+
+	FontColor color.Color
+	Font      font.Face
+
+	// LineSpacing spacing between lines in tab text (top and bottom)
+	LineSpacing float64
+
+	DebugTopBottom bool
+	DebugHeight    bool
 }
 
 type TabPlayer struct {
