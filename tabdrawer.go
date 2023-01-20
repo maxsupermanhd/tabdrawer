@@ -213,7 +213,7 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 			c.DrawRectangle(rowx, rowy, colw, rowh)
 			c.Fill()
 			c.SetColor(color.White)
-			c.DrawString(pl.Name, rowx+rowh, rowy+rowh-(params.RowAdditionalHeight)-2)
+			c.DrawString(pl.Name, rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2)
 			var pings string
 			switch params.LatencyStyle {
 			case LatencyNumber:
