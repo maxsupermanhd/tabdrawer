@@ -18,7 +18,7 @@ func main() {
 	rand.Seed(69421)
 	for i := 0; i < 47; i++ {
 		players[uuid.New()] = tabdrawer.TabPlayer{
-			Name:        generateRandomStirng(4 + rand.Intn(13)),
+			Name:        chat.Message{Text: generateRandomStirng(4 + rand.Intn(13))},
 			Ping:        rand.Intn(500),
 			HeadTexture: nil,
 			Gamemode:    "survival",

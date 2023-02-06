@@ -16,6 +16,28 @@ import (
 )
 
 func main() {
+	players := map[uuid.UUID]tabdrawer.TabPlayer{}
+	var changeUUID uuid.UUID
+	rand.Seed(69421)
+	for i := 0; i < 47; i++ {
+		u := uuid.New()
+		if i == 42 {
+			changeUUID = u
+		}
+		players[u] = tabdrawer.TabPlayer{
+			Name:        chat.Message{Text: generateRandomStirng(4 + rand.Intn(13))},
+			Ping:        rand.Intn(500),
+			HeadTexture: nil,
+			Gamemode:    "survival",
+		}
+	}
+	players[uuid.New()] = tabdrawer.TabPlayer{
+		Name:        chat.Message{Text: generateRandomStirng(4 + rand.Intn(13)), Color: "green"},
+		Ping:        rand.Intn(500),
+		HeadTexture: nil,
+		Gamemode:    "survival",
+	}
+
 	params := tabdrawer.TabParameters{
 		LatencyColoring:       tabdrawer.DefaultLatencyColoring,
 		LatencyStyle:          tabdrawer.LatencyNumberMs,
@@ -26,26 +48,17 @@ func main() {
 		ColumnSpacing:         6,
 		MaxRows:               20,
 		FontColor:             color.White,
-		Font:                  nil,
+		Font:                  truetype.NewFace(noerr(truetype.Parse(noerr(os.ReadFile("./font.ttf")))), &truetype.Options{Size: 16}),
 		LineSpacing:           0,
 		DebugTopBottom:        false,
 		DebugHeight:           false,
 		RowAdditionalHeight:   2.0,
-	}
-
-	fontBytes := noerr(os.ReadFile("./font.ttf"))
-	fnt := noerr(truetype.Parse(fontBytes))
-	params.Font = truetype.NewFace(fnt, &truetype.Options{Size: 16})
-
-	players := map[uuid.UUID]tabdrawer.TabPlayer{}
-	rand.Seed(69421)
-	for i := 0; i < 47; i++ {
-		players[uuid.New()] = tabdrawer.TabPlayer{
-			Name:        generateRandomStirng(4 + rand.Intn(13)),
-			Ping:        rand.Intn(500),
-			HeadTexture: nil,
-			Gamemode:    "survival",
-		}
+		OverridePlayerName: func(u uuid.UUID) chat.Message {
+			if u == changeUUID {
+				return chat.Message{Text: "This is overriden"}
+			}
+			return players[u].Name
+		},
 	}
 
 	ctop := &chat.Message{}
