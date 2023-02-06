@@ -147,14 +147,12 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 
 	pmw, pmh := float64(0), float64(0)
 	for u, v := range players {
-		var name string
+		name := v.Name.ClearString()
 		if params.OverridePlayerName != nil {
 			vv := params.OverridePlayerName(u)
 			if vv != nil {
 				name = vv.ClearString()
 			}
-		} else {
-			name = v.Name.ClearString()
 		}
 		w, h := mctx.MeasureString(fmt.Sprint(name, v.Ping, "    ms"))
 		if pmw < w {
