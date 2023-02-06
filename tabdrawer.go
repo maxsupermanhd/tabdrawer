@@ -92,8 +92,8 @@ type TabParameters struct {
 	FontColor color.Color
 	Font      font.Face
 
-	// OverridePlayerName if not nil can override rendering of particular uuid (must not be multiline)
-	OverridePlayerName func(uuid.UUID) chat.Message
+	// OverridePlayerName if not nil can override rendering of particular uuid (must not be multiline), can return nil
+	OverridePlayerName func(uuid.UUID) *chat.Message
 
 	// SortFunction used to sort player names if nil DefaultPlayerSorter is used (sorts by name)
 	SortFunction func(a []uuid.UUID, p map[uuid.UUID]TabPlayer, i int, j int) bool
@@ -149,7 +149,10 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 	for u, v := range players {
 		var name string
 		if params.OverridePlayerName != nil {
-			name = params.OverridePlayerName(u).ClearString()
+			vv := params.OverridePlayerName(u)
+			if vv != nil {
+				name = vv.ClearString()
+			}
 		} else {
 			name = v.Name.ClearString()
 		}
@@ -234,12 +237,13 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 			c.Fill()
 			c.SetColor(color.White)
 
-			var namedrawf []renderFragment
 			if params.OverridePlayerName != nil {
-				namedrawf = fragmentMessage(c, gg.AlignLeft, params.OverridePlayerName(keys[plc]), rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2, colorcodes)
-			} else {
-				namedrawf = fragmentMessage(c, gg.AlignLeft, params.OverridePlayerName(keys[plc]), rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2, colorcodes)
+				pln := params.OverridePlayerName(keys[plc])
+				if pln != nil {
+					pl.Name = *pln
+				}
 			}
+			namedrawf := fragmentMessage(c, gg.AlignLeft, pl.Name, rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2, colorcodes)
 			for _, v := range namedrawf {
 				c.SetColor(v.color)
 				c.DrawString(v.str, v.x, v.y)

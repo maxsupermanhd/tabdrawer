@@ -48,8 +48,8 @@ type TabParameters struct {
  FontColor color.Color
  Font      font.Face
 
- // OverridePlayerName if not nil can override rendering of particular uuid (must not be multiline)
- OverridePlayerName func(uuid.UUID) chat.Message
+ // OverridePlayerName if not nil can override rendering of particular uuid (must not be multiline), can return nil
+ OverridePlayerName func(uuid.UUID) *chat.Message
 
  // SortFunction used to sort player names if nil DefaultPlayerSorter is used (sorts by name)
  SortFunction func(a []uuid.UUID, p map[uuid.UUID]TabPlayer, i int, j int) bool

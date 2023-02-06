@@ -53,11 +53,11 @@ func main() {
 		DebugTopBottom:        false,
 		DebugHeight:           false,
 		RowAdditionalHeight:   2.0,
-		OverridePlayerName: func(u uuid.UUID) chat.Message {
+		OverridePlayerName: func(u uuid.UUID) *chat.Message {
 			if u == changeUUID {
-				return chat.Message{Text: "This is overriden"}
+				return &chat.Message{Text: "This is overriden"}
 			}
-			return players[u].Name
+			return nil
 		},
 	}
 
