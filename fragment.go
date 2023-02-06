@@ -78,9 +78,9 @@ func fragmentMultilineMessage(c *gg.Context, align gg.Align, msg chat.Message, x
 		switch align {
 		case gg.AlignCenter:
 			xx = *x - (*lx+w)/2 + *lx
-		case gg.AlignRight:
-			xx = *x + *lx
 		case gg.AlignLeft:
+			xx = *x + *lx
+		case gg.AlignRight:
 			xx = *x - w - *lx
 		}
 		if *lh < h {
@@ -117,9 +117,9 @@ func fragmentMultilineMessage(c *gg.Context, align gg.Align, msg chat.Message, x
 		switch align {
 		case gg.AlignCenter:
 			xx = *x - ((*lx + w + tw + law) / 2) + *lx
-		case gg.AlignRight:
-			xx = *x + *lx
 		case gg.AlignLeft:
+			xx = *x + *lx
+		case gg.AlignRight:
 			xx = *x - w - *lx
 		}
 		fragments = append(fragments, renderFragment{

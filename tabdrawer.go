@@ -92,6 +92,12 @@ type TabParameters struct {
 	FontColor color.Color
 	Font      font.Face
 
+	// OverridePlayerName if not nil can override rendering of particular uuid (must not be multiline)
+	OverridePlayerName func(uuid.UUID) chat.Message
+
+	// SortFunction used to sort player names if nil DefaultPlayerSorter is used (sorts by name)
+	SortFunction func(a []uuid.UUID, p map[uuid.UUID]TabPlayer, i int, j int) bool
+
 	// LineSpacing spacing between lines in tab text (top and bottom)
 	LineSpacing float64
 
@@ -99,8 +105,12 @@ type TabParameters struct {
 	DebugHeight    bool
 }
 
+func DefaultPlayerSorter(k []uuid.UUID, p map[uuid.UUID]TabPlayer, i int, j int) bool {
+	return strings.Compare(p[k[i]].Name.ClearString(), p[k[j]].Name.ClearString()) < 0
+}
+
 type TabPlayer struct {
-	Name        string
+	Name        chat.Message
 	Ping        int
 	HeadTexture image.Image
 	Gamemode    string
@@ -127,13 +137,23 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 	for u := range players {
 		keys = append(keys, u)
 	}
-	sort.Slice(keys, func(i, j int) bool {
-		return strings.Compare(players[keys[i]].Name, players[keys[j]].Name) < 0
-	})
+	if params.SortFunction == nil {
+		sort.Slice(keys, func(i, j int) bool {
+			return strings.Compare(players[keys[i]].Name.ClearString(), players[keys[j]].Name.ClearString()) < 0
+		})
+	} else {
+		sort.Slice(keys, func(i, j int) bool { return params.SortFunction(keys, players, i, j) })
+	}
 
 	pmw, pmh := float64(0), float64(0)
-	for _, v := range players {
-		w, h := mctx.MeasureString(fmt.Sprint(v.Name, v.Ping, "    ms"))
+	for u, v := range players {
+		var name string
+		if params.OverridePlayerName != nil {
+			name = params.OverridePlayerName(u).ClearString()
+		} else {
+			name = v.Name.ClearString()
+		}
+		w, h := mctx.MeasureString(fmt.Sprint(name, v.Ping, "    ms"))
 		if pmw < w {
 			pmw = w
 		}
@@ -213,7 +233,18 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 			c.DrawRectangle(rowx, rowy, colw, rowh)
 			c.Fill()
 			c.SetColor(color.White)
-			c.DrawString(pl.Name, rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2)
+
+			var namedrawf []renderFragment
+			if params.OverridePlayerName != nil {
+				namedrawf = fragmentMessage(c, gg.AlignLeft, params.OverridePlayerName(keys[plc]), rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2, colorcodes)
+			} else {
+				namedrawf = fragmentMessage(c, gg.AlignLeft, params.OverridePlayerName(keys[plc]), rowx+rowh+params.RowAdditionalHeight, rowy+rowh-(params.RowAdditionalHeight)-2, colorcodes)
+			}
+			for _, v := range namedrawf {
+				c.SetColor(v.color)
+				c.DrawString(v.str, v.x, v.y)
+			}
+
 			var pings string
 			switch params.LatencyStyle {
 			case LatencyNumber:
@@ -231,6 +262,7 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 			if pl.HeadTexture != nil {
 				c.DrawImage(imaging.Resize(pl.HeadTexture, int(rowh), int(rowh), imaging.NearestNeighbor), int(rowx), int(rowy))
 			}
+
 			plc++
 		}
 	}
