@@ -106,7 +106,7 @@ type TabParameters struct {
 }
 
 func DefaultPlayerSorter(k []uuid.UUID, p map[uuid.UUID]TabPlayer, i int, j int) bool {
-	return strings.Compare(p[k[i]].Name.ClearString(), p[k[j]].Name.ClearString()) < 0
+	return strings.Compare(strings.ToLower(p[k[i]].Name.ClearString()), strings.ToLower(p[k[j]].Name.ClearString())) < 0
 }
 
 type TabPlayer struct {
@@ -139,7 +139,7 @@ func DrawTab(players map[uuid.UUID]TabPlayer, tabtop, tabbottom *chat.Message, p
 	}
 	if params.SortFunction == nil {
 		sort.Slice(keys, func(i, j int) bool {
-			return strings.Compare(players[keys[i]].Name.ClearString(), players[keys[j]].Name.ClearString()) < 0
+			return strings.Compare(strings.ToLower(players[keys[i]].Name.ClearString()), strings.ToLower(players[keys[j]].Name.ClearString())) < 0
 		})
 	} else {
 		sort.Slice(keys, func(i, j int) bool { return params.SortFunction(keys, players, i, j) })
