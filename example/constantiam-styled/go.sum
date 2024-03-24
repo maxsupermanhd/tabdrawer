@@ -6,6 +6,8 @@ github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 h1:DACJavvAHhabrF0
 github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGwJL78qG/PmXZO1EjYhfJinVAhrmmHX6Z8B9k=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/maxsupermanhd/go-vmc/v762 v762.0.0-20231128214918-0e72a4850666 h1:x4wqBkUduWV/6eAksPVzmeIQV0mjXlXXl0Ff1RjQQTU=
+github.com/maxsupermanhd/go-vmc/v762 v762.0.0-20231128214918-0e72a4850666/go.mod h1:LUlOdIlnkyFBf/Hm3SjCoanrORKe2ZqduVtweorqFkc=
 github.com/maxsupermanhd/tabdrawer v0.0.0-20230120160113-f9a7a7b5becb h1:WGLa4q7NQ9cyZ09gxrIZlBJVfF6yG6cpkZ/4sjUgf9o=
 github.com/maxsupermanhd/tabdrawer v0.0.0-20230120160113-f9a7a7b5becb/go.mod h1:N9PxuCW1H2RlKjxWEb9Kmn/qds3rCwvjx80I4Qr2xmA=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
