@@ -4,8 +4,8 @@ import (
 	"image/color"
 	"strings"
 
-	"github.com/Tnze/go-mc/chat"
 	"github.com/fogleman/gg"
+	"github.com/maxsupermanhd/go-vmc/v762/chat"
 )
 
 type renderFragment struct {

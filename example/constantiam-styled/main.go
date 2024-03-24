@@ -9,9 +9,9 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/Tnze/go-mc/chat"
 	"github.com/golang/freetype/truetype"
 	"github.com/google/uuid"
+	"github.com/maxsupermanhd/go-vmc/v762/chat"
 	"github.com/maxsupermanhd/tabdrawer"
 )
 

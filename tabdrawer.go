@@ -7,10 +7,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/Tnze/go-mc/chat"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/google/uuid"
+	"github.com/maxsupermanhd/go-vmc/v762/chat"
 	"golang.org/x/image/font"
 )
 
